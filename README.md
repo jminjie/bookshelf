@@ -11,4 +11,4 @@ to capture that same serendipity in web form. You can probably do this with
 GoodReads.
 
 ## Demo
-See the demo here [here](https://jminjie.github.io/bookshelf/books.html).
+See the demo [here](https://jminjie.github.io/bookshelf/books.html).
