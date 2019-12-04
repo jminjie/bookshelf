@@ -9,11 +9,16 @@ function main() {
 
   for (var i = 0; i < books.length; i++) {
     var book = books[i];
+    hideBook(book);
     var title = book.getElementsByClassName('title')[0].innerHTML;
     var about = book.getElementsByClassName('about')[0].innerHTML;
     book = new Book(title, about);
     addBook(book);
   }
+}
+
+function hideBook(book) {
+    book.setAttribute("style", "visibility:hidden");
 }
 
 class Book {
