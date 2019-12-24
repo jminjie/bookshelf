@@ -1,7 +1,12 @@
 const CANVAS_HEIGHT = document.getElementById("bookshelfSvg").height.animVal.value;
+const CANVAS_WIDTH = 700;
 const MIN_BOOK_HEIGHT = 300;
+const BOOK_HEIGHT_RANGE = 50;
 const MIN_BOOK_WIDTH = 50;
+const BOOK_WIDTH_RANGE = 20;
 const SVGNS = "http://www.w3.org/2000/svg";
+const MIN_FONT = 15;
+const FONT_RANGE = 1;
 
 allBooks = new Map();
 
@@ -44,8 +49,23 @@ class Book {
     }
 }
 
+shelfCount = 0;
+
+function nextShelf() {
+    shelfCount++;
+}
+
+function getShelfHeight() {
+    return shelfCount * (MIN_BOOK_HEIGHT + BOOK_HEIGHT_RANGE + 10);
+}
+
+
 function addBook(book) {
     if (typeof addBook.offset == 'undefined') {
+        addBook.offset = 0;
+    }
+    if (addBook.offset + MIN_BOOK_WIDTH + BOOK_WIDTH_RANGE >= CANVAS_WIDTH) {
+        nextShelf();
         addBook.offset = 0;
     }
 
@@ -54,9 +74,9 @@ function addBook(book) {
     titleIsLong = book.title.length > 20;
     titleIsShort = book.title.length < 10;
 
-    var bookHeight = Math.random()*50 + MIN_BOOK_HEIGHT;
-    var bookWidth = Math.random()*20 + MIN_BOOK_WIDTH;
-    var verticalOffset = CANVAS_HEIGHT-bookHeight;
+    var bookHeight = Math.random()*BOOK_HEIGHT_RANGE + MIN_BOOK_HEIGHT;
+    var bookWidth = Math.random()*BOOK_WIDTH_RANGE + MIN_BOOK_WIDTH;
+    var verticalOffset = CANVAS_HEIGHT-bookHeight - getShelfHeight();
     // titleSpaceRatio is how far up the spine of the book the title appears
     var titleSpaceRatio = 4/5;
     if (titleIsLong) {
@@ -64,13 +84,13 @@ function addBook(book) {
     } else if (titleIsShort) {
         titleSpaceRatio = 3/4;
     }
-    var verticalTextOffset = CANVAS_HEIGHT - titleSpaceRatio*bookHeight;
+    var verticalTextOffset = CANVAS_HEIGHT - titleSpaceRatio*bookHeight - getShelfHeight();
     var horizontalOffset = addBook.offset;
     var horizontalTextOffset = addBook.offset + bookWidth*5/12;
     var textRotationPoint = horizontalTextOffset + ", " + verticalTextOffset;
     var bookColor = getRandomColor();
     var textColor = isDark(bookColor) ? 'beige' : 'black';
-    var textSize = 16 + Math.random();
+    var textSize = MIN_FONT + Math.random()*FONT_RANGE;
 
     var rect = document.createElementNS(SVGNS, 'rect');
     rect.setAttribute('x', horizontalOffset);
