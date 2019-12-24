@@ -1,5 +1,5 @@
 const CANVAS_HEIGHT = document.getElementById("bookshelfSvg").height.animVal.value;
-const CANVAS_WIDTH = 700;
+const CANVAS_WIDTH = (window.innerWidth < 700) ? window.innerWidth : 700;
 const MIN_BOOK_HEIGHT = 300;
 const BOOK_HEIGHT_RANGE = 50;
 const MIN_BOOK_WIDTH = 50;
