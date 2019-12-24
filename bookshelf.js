@@ -3,17 +3,18 @@ const MIN_BOOK_HEIGHT = 300;
 const MIN_BOOK_WIDTH = 50;
 const SVGNS = "http://www.w3.org/2000/svg";
 
-function main() {
-    var books = document.getElementsByClassName('book');
-    var shelf = document.getElementById("shelf");
-    books = shuffle(Array.from(books));
+allBooks = new Map();
 
-    for (var i = 0; i < books.length; i++) {
-        var book = books[i];
-        hideBook(book);
-        var title = book.getElementsByClassName('title')[0].innerHTML;
-        var about = book.getElementsByClassName('about')[0].innerHTML;
-        book = new Book(title, about);
+function main() {
+    var bookElements = document.getElementsByClassName('book');
+    bookArray = shuffle(Array.from(bookElements));
+
+    for (var i = 0; i < bookArray.length; i++) {
+        var currentBook = bookArray[i];
+        hideBookHtml(currentBook);
+        var title = currentBook.getElementsByClassName('title')[0].innerHTML;
+        var about = currentBook.getElementsByClassName('about')[0].innerHTML;
+        var book = new Book(title, about);
         addBook(book);
     }
 }
@@ -30,14 +31,16 @@ function shuffle(arr) {
     return arr;
 }
 
-function hideBook(book) {
+function hideBookHtml(book) {
     book.setAttribute("style", "visibility:hidden");
 }
 
 class Book {
     constructor(title, about) {
+        Book.nextId = Book.nextId ? Book.nextId + 1 : 1;
         this.title = title;
         this.about = about;
+        this.id = Book.nextId;
     }
 }
 
@@ -45,6 +48,8 @@ function addBook(book) {
     if (typeof addBook.offset == 'undefined') {
         addBook.offset = 0;
     }
+
+    allBooks.set(book.id, book);
 
     titleIsLong = book.title.length > 20;
     titleIsShort = book.title.length < 10;
@@ -73,7 +78,7 @@ function addBook(book) {
     rect.setAttribute('height', bookHeight);
     rect.setAttribute('width', bookWidth);
     rect.setAttribute('fill', bookColor);
-    rect.setAttribute('onclick', "setAbout(\"" + book.about + "\")");
+    rect.setAttribute('onclick', "setAbout(\"" + book.id + "\")");
     document.getElementById('bookshelfSvg').appendChild(rect);
 
     var text = document.createElementNS(SVGNS, 'text');
@@ -83,7 +88,7 @@ function addBook(book) {
     text.setAttribute('fill', textColor);
     text.setAttribute('font-size', textSize);
     text.setAttribute('transform', "rotate(90, " + textRotationPoint + ")");
-    text.setAttribute('onclick', "setAbout(\"" + book.about + "\")");
+    text.setAttribute('onclick', "setAbout(\"" + book.id + "\")");
     document.getElementById('bookshelfSvg').appendChild(text);
 
     addBook.offset += bookWidth;
@@ -104,8 +109,10 @@ function addLineBreakIfNeeded(text) {
     return text;
 }
 
-function setAbout(about) {
-    document.getElementById("aboutTheBook").innerHTML = about;
+function setAbout(id) {
+    // setAbout gets the id as a string, so convert to int
+    book = allBooks.get(parseInt(id));
+    document.getElementById("aboutTheBook").innerHTML = book.about;
 }
 
 function getRandomColor() {
